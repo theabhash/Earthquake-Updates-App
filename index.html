@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=no; target-densityDpi=device-dpi"/>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.css" />
+
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
+
+    <link rel="stylesheet" href="dist/MarkerCluster.css" />
+
+    <link rel="stylesheet" href="dist/MarkerCluster.Default.css" />
+
+    <script src="dist/leaflet.markercluster-src.js"></script>
+    <style>
+        #mapPage, #map {
+            height: 100%;
+        }
+
+        #map-content{
+            height: 100%;
+            padding: 0px;
+            margin:0px;
+            z-index: -1;
+        }
+        #curLoc{
+            position: absolute;
+            bottom: 0;
+            left: 10px;
+        }
+    </style>
+
+
+</head>
+
+<body>
+<!-- Page 1 start -->
+<div data-role="page" id="list" class="ui-page-theme-e">
+    <div data-role="header" data-position="fixed">
+
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#" class="ui-btn ui-btn-active ui-state-persist ui-btn-inline" data-icon="bullets">Earthquakes</a></li>
+                <li><a href="#mapPage" class="ui-btn ui-btn-inline" data-icon="location">Map</a></li>
+                <li><a href="#dmglist" class="optional ui-btn ui-btn-inline" data-icon="star">Data from DMG</a></li>
+
+            </ul>
+        </div>
+    </div><!-- /header -->
+
+    <div data-role="content">
+        <ul id="ekList" data-role="listview">
+        </ul>
+
+        <a href="#mypanel" class="ui-btn ui-shadow ui-corner-all ui-icon-gear ui-btn-icon-notext ui-btn-b" data-theme="b">Delete</a>
+        <p style="color: cornflowerblue; font-size: smaller; text-align:center" data-role="none">Data Source: USGS/DMG;  theabhash@gmail.com</p>
+
+    </div><!-- /content -->
+
+
+    <div data-role="panel" data-display="overlay" id="mypanel" data-position="left">
+        <!-- panel content goes here -->
+        <b>Look for Earthquake</b><br><b style="text-align: center;font-size: small">(In List and Map)</b>
+        <label for="text-basic">After Date: </label> 
+        <input type="date" id="textbox_id" value="2015-04-01"  >
+
+        <label for="slider-s">With Magnitude Greater Than:</label>
+            <input id="select_id" type="range" name="slider-s" id="slider-s" value="4" min="0" max="10"  step=".1" data-highlight="true">
+        <button id="submit" class="ui-btn ui-btn-inline" onclick="all()">Submit</button>
+<br><br><br>
+     <label for="text-basic" >Number of Data in List:</label>
+        <input type="number" name="text-basic" id="text-basic" value=6 onchange="populate_list()" >
+    </div><!-- /panel -->
+
+</div><!-- /page 1 -->
+
+<!-- Start of second page -->
+<div data-role="page" id="mapPage">
+
+    <div data-role="header" data-position="fixed" >
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#list" class="ui-btn ui-btn-inline ui-mini ui-corner-all " data-icon="bullets">Earthquakes</a></li>
+                <li><a href="#" class="ui-btn ui-btn-active ui-state-persist" data-icon="location">Map</a></li>
+                <li><a href="#dmglist" class="optional ui-btn ui-btn-inline" data-icon="star">Data from DMG</a></li>
+            </ul>
+        </div>
+    </div>
+    <div id="map-content" data-role="content">
+        <div id="map"></div>
+
+
+    </div>
+</div><!-- /second Page -->
+
+<!-- /Fourth List detail Page -->
+<div id="detailsPage" data-role="page" data-cache="false">
+
+    <div data-role="header" data-add-back-btn="true">
+
+    </div>
+
+    <div data-role="content">
+
+        <h4 id="ekdis">dis</h4>
+        <ul data-role="listview" data-inset="true">
+            <li><b>Title: </b><span id="ektitle">Eartquake Details</span></li>
+            <li><b>Magnitude: </b><span id="ekmag">mag</span></li>
+            <li><b>Latitude: </b> <span id="eklatitude">CDI</span></li>
+            <li><b>Longitude: </b><span id="eklongitude">CDI</span></li>
+            <li><b>Maximum Reported Intensity: </b><span id="ekcdi">CDI</span></li>
+            <li><b>Date: </b><span id="ekdate">depth</span></li>
+            <li><b>Significance Index(0-1000): </b><span id="eksig">depth</span></li>
+            <li data-icon="false" id="maplink" href="#mapPage">Go To Map</li>
+        </ul>
+
+    </div>
+
+</div>
+
+<!-- /Third List DMG Page -->
+<div data-role="page" id="dmglist" class="ui-page-theme-e">
+    <div data-role="header" data-position="fixed">
+
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#list" class="ui-btn ui-btn-active ui-state-persist ui-btn-inline" data-icon="bullets">Earthquakes</a></li>
+                <li><a href="#mapPage" class="ui-btn ui-btn-inline" data-icon="location">Map</a></li>
+                <li><a href="#" class="optional ui-btn ui-btn-inline" data-icon="star">Data from DMG</a></li>
+
+            </ul>
+        </div>
+    </div><!-- /header -->
+
+    <div data-role="content">
+        <p>This page shows the recent earthquake data with their magnitude as published by National Seismological Center,Department of Mines and Geology. The magnitude and epicentre may differ slightly from data provided by USGS because different station are used for calculation </p>
+        <table data-role="table" id="dmglist-table" data-mode="reflow" class="ui-responsive">
+              <thead>
+            <tr>
+                  <th data-priority="1">Epicenter</th>                 
+                 <th data-priority="Persist">Date</th>      
+                 <th data-priority="2">Local Time</th>   
+             <th data-priority="3"><abbr title="Magnitude(ML(≥4 only )">Magnitude(ML)</abbr></th>
+               </tr>
+          </thead>
+              <tbody>
+           
+          </tbody>
+        </table>
+
+
+
+    </div><!-- /content -->
+
+
+
+</div><!-- /page 3 -->
+
+
+</body>
+
+<script src="ek.js"></script>
+
+
+</html>
